@@ -47,3 +47,34 @@ This is a Express API Starter with Typescript and other packages related to Expr
       }
     }
     ```
+
+### Setting up `prettier`
+
+- Installing Prettier
+  ```bash
+  pnpm add -D prettier
+  ```
+- Setting up Config & Ignore File
+  ```json
+  {
+    "tabWidth": 2,
+    "singleQuote": false,
+    "arrowParens": "avoid",
+    "endOfLine": "lf"
+  }
+  ```
+  ```ignore
+  ./dist
+  ./node_modules
+  ```
+- Setting Up Commands
+  ```json
+  ...
+  	"version": "0.0.0",
+  	"scripts": {
+  		"start": "node index.js",
+  		"format:check": "prettier --check .",
+  		"format": "prettier --write ."
+  	},
+  ...
+  ```
