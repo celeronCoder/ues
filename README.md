@@ -26,7 +26,11 @@ This is a Express API Starter with Typescript and other packages related to Expr
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "build",
-        "rootDir": "src"
+        "rootDir": "src",
+        "baseUrl": ".",
+        "paths": {
+          "@/*": ["src/*"]
+        }
       },
       "lib": ["es2015"]
     }
@@ -102,6 +106,7 @@ This is a Express API Starter with Typescript and other packages related to Expr
 - Install `express` and `dotenv`"
   ```bash
   pnpm add express dotenv
+  pnpm add -D @types/express # important for typescript intellisense
   ```
 - Add in the base express server:
 
@@ -125,4 +130,110 @@ This is a Express API Starter with Typescript and other packages related to Expr
   app.listen(PORT, () =>
     console.log(`🚅 Express Server Started at port: ${PORT}`)
   );
+  ```
+
+### Setting up Logging for API
+
+Logging is a very important task that helps debug issues and also do analytics with it.
+
+Here we are going to use `winston` as our base logger and combine it to `morgan` to also log `http events`.
+
+Here's how we'll do it:
+
+- Installing Winston
+  ```bash
+  pnpm add winston
+  ```
+- Setting up Base Logger
+
+  ```ts
+  // lib/logger.ts
+  import winston from "winston";
+
+  const levels = {
+    error: 0,
+    warn: 1,
+    info: 2,
+    http: 3,
+    debug: 4,
+  };
+
+  const level = () => {
+    const env = process.env.NODE_ENV || "development";
+    const isDevelopment = env === "development";
+    return isDevelopment ? "debug" : "warn";
+  };
+
+  const colors = {
+    error: "red",
+    warn: "yellow",
+    info: "green",
+    http: "magenta",
+    debug: "white",
+  };
+
+  winston.addColors(colors);
+
+  const format = winston.format.combine(
+    winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
+    winston.format.colorize({ all: true }),
+    winston.format.printf(
+      info => `${info.timestamp} ${info.level}: ${info.message}`
+    )
+  );
+
+  const transports = [
+    new winston.transports.Console(),
+    new winston.transports.File({
+      filename: "logs/error.log",
+      level: "error",
+    }),
+    new winston.transports.File({ filename: "logs/all.log" }),
+  ];
+
+  const logger = winston.createLogger({
+    level: level(),
+    levels,
+    format,
+    transports,
+  });
+
+  export default logger;
+  ```
+
+- Setting up a http-logger to log http events
+
+  ```bash
+  pnpm add morgan
+  pnpm add -D @types/morgan
+  ```
+
+  ```ts
+  // middleware/httpLogger.ts
+  import morgan, { StreamOptions } from "morgan";
+  import { logger } from "../lib";
+
+  const stream: StreamOptions = {
+    write: message => logger.http(message),
+  };
+
+  // Skip all the Morgan http log if the
+  // application is not running in development mode.
+  // This method is not really needed here since
+  // we already told to the logger that it should print
+  // only warning and error messages in production.
+  const skip = () => {
+    const env = process.env.NODE_ENV || "development";
+    return env !== "development";
+  };
+
+  export const httpLogger = morgan("combined", { stream, skip });
+  ```
+
+- Adding httpLogger Middleware to express app
+  ```ts
+  // src/index.ts
+  ...
+  app.use(httpLogger);
+  ...
   ```
