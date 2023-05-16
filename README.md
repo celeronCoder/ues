@@ -96,3 +96,33 @@ This is a Express API Starter with Typescript and other packages related to Expr
     ```bash
     pnpx husky add .husky/pre-commit "npx pretty-quick --staged"
     ```
+
+### Adding base `express` App
+
+- Install `express` and `dotenv`"
+  ```bash
+  pnpm add express dotenv
+  ```
+- Add in the base express server:
+
+  ```ts
+  import express, { Express, Response } from "express";
+  import dotenv from "dotenv";
+
+  // for env variables
+  dotenv.config();
+
+  const app: Express = express();
+
+  const PORT = process.env.PORT || 8000;
+
+  // base route
+
+  app.get("/", (_, res: Response) => {
+    res.json({ message: "Welcome to UES 🚀" });
+  });
+
+  app.listen(PORT, () =>
+    console.log(`🚅 Express Server Started at port: ${PORT}`)
+  );
+  ```
