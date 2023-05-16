@@ -78,3 +78,21 @@ This is a Express API Starter with Typescript and other packages related to Expr
   	},
   ...
   ```
+- Installing [Husky](https://github.com/typicode/husky) and [pretty-quick](https://www.npmjs.com/package/pretty-quick)
+  ```bash
+  pnpm add -D husky pretty-quick
+  ```
+- Configuring Husky
+  - Add this script into `package.json`
+  ```json
+  ...
+  {
+  	"scripts":{
+  		"husky:prepare": "husky install"
+  	}
+  }
+  ```
+  - Add Pre-Commit Hook to run prettier before commit
+    ```bash
+    pnpx husky add .husky/pre-commit "npx pretty-quick --staged"
+    ```
