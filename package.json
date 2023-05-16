@@ -1,5 +1,5 @@
 {
-  "name": "uts",
+  "name": "ues",
   "version": "1.0.0",
   "description": "This is a Express API Starter with Typescript and other packages related to Express.JS which performs tasks like logging, load balancing, cors, static page rendering, etc.",
   "main": "index.js",

@@ -1,8 +1,8 @@
-# Ultimate Express Starter (UTS)
+# Ultimate Express Starter (ues)
 
 This is a Express API Starter with Typescript and other packages related to Express.JS which performs tasks like logging, load balancing, cors, static page rendering, etc.
 
-# Building UTS
+# Building ues
 
 ### Setting up `typescript` Project
 
